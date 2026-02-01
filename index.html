@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>MABON SUITES HOTEL | Executive Performance Cloud</title>
+    <meta name="description" content="Dynamic Real-Time Secure Cloud Application for Executive and Management Performance Monitoring">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #05060b;
+            --fg: #eaeaf0;
+            --card: rgba(255,255,255,0.06);
+            --card-border: rgba(255,255,255,0.15);
+            --gold: #e6c77b;
+            --violet: #7f5af0;
+            --muted: #a0a0b0;
+            --success: #22c55e;
+            --danger: #ef4444;
+        }
+        .light {
+            --bg: #f5f7ff;
+            --fg: #333344;
+            --card: rgba(255,255,255,0.9);
+            --card-border: rgba(0,0,0,0.1);
+            --gold: #b89437;
+            --violet: #6c4cd9;
+            --muted: #555566;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--fg);
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: background 0.3s, color 0.3s;
+        }
+        h1, h2, h3, .brand { font-family: 'Playfair Display', serif; }
+        
+        /* Animated Background */
+        #animated-bg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        /* Header */
+        header {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            background: var(--card);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--card-border);
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .brand {
+            font-size: 1.25rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--gold), var(--violet));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .header-actions {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--violet), var(--gold));
+            color: white;
+        }
+        .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+        .btn-ghost {
+            background: transparent;
+            color: var(--fg);
+            border: 1px solid var(--card-border);
+        }
+        .btn-ghost:hover { background: var(--card); }
+        .btn-icon {
+            width: 40px; height: 40px;
+            padding: 0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Main Content */
+        main {
+            position: relative;
+            z-index: 1;
+            padding-top: 80px;
+            padding-bottom: 100px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.5rem;
+        }
+        
+        /* Floating Tabs - Always Visible */
+        .floating-tabs {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 90;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background: var(--card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 10px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            min-width: 60px;
+        }
+        
+        .floating-tab-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            background: transparent;
+            color: var(--muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .floating-tab-btn:hover {
+            background: rgba(127, 90, 240, 0.1);
+            color: var(--violet);
+            transform: scale(1.1);
+        }
+        
+        .floating-tab-btn.active {
+            background: linear-gradient(135deg, var(--violet), var(--gold));
+            color: white;
+            box-shadow: 0 4px 15px rgba(127, 90, 240, 0.4);
+        }
+        
+        .floating-tab-btn .tab-tooltip {
+            position: absolute;
+            right: 60px;
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            backdrop-filter: blur(20px);
+        }
+        
+        .floating-tab-btn:hover .tab-tooltip {
+            opacity: 1;
+        }
+        
+        /* Tab Navigation */
+        .tab-nav {
+            display: flex;
+            gap: 0.5rem;
+            background: var(--card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border);
+            border-radius: 1rem;
+            padding: 0.5rem;
+            margin-bottom: 2rem;
+            overflow-x: auto;
+        }
+        .tab-btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            border: none;
+            background: transparent;
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            white-space: nowrap;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .tab-btn:hover { color: var(--fg); }
+        .tab-btn.active {
+            background: linear-gradient(135deg, var(--violet), var(--gold));
+            color: white;
+        }
+        
+        /* Cards */
+        .card {
+            background: var(--card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+        .card:hover { transform: translateY(-2px); border-color: var(--violet); }
+        .card-title {
+            font-size: 0.875rem;
+            color: var(--muted);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .card-value {
+            font-size: 2rem;
+            font-weight: 700;
+            font-family: 'Playfair Display', serif;
+        }
+        .card-value.gold { color: var(--gold); }
+        .card-value.violet { color: var(--violet); }
+        .card-value.success { color: var(--success); }
+        
+        /* Grid */
+        .grid { display: grid; gap: 1rem; }
+        .grid-2 { grid-template-columns: repeat(2, 1fr); }
+        .grid-3 { grid-template-columns: repeat(3, 1fr); }
+        .grid-4 { grid-template-columns: repeat(4, 1fr); }
+        @media (max-width: 1024px) { .grid-4 { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 768px) { 
+            .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+            .tab-nav { display: none; }
+            .mobile-nav { display: flex !important; }
+            .floating-tabs { display: none; }
+        }
+        
+        /* Section */
+        .section { display: none; }
+        .section.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Iframe Container */
+        .iframe-container {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 1rem;
+            overflow: hidden;
+            width: 100%;
+            height: 2500px;
+            min-height: 2500px;
+        }
+        .iframe-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        /* Mobile Navigation */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            background: var(--card);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--card-border);
+            padding: 0.5rem;
+            z-index: 100;
+            justify-content: space-around;
+        }
+        .mobile-nav-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.5rem;
+            border: none;
+            background: transparent;
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 0.7rem;
+            transition: color 0.2s;
+        }
+        .mobile-nav-btn.active { color: var(--violet); }
+        .mobile-nav-btn svg { width: 24px; height: 24px; }
+        
+        /* Floating Social Button */
+        .floating-social {
+            position: fixed;
+            bottom: 100px;
+            right: 1.5rem;
+            z-index: 90;
+        }
+        @media (max-width: 768px) { .floating-social { bottom: 80px; right: 1rem; } }
+        .social-toggle {
+            width: 56px; height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--violet), var(--gold));
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 4px 20px rgba(127, 90, 240, 0.4);
+            transition: all 0.3s;
+        }
+        .social-toggle:hover { transform: scale(1.1); }
+        .social-toggle.active { transform: rotate(45deg); }
+        .social-icons {
+            position: absolute;
+            bottom: 70px;
+            right: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s;
+            transform: translateY(20px);
+        }
+        .social-icons.active { 
+            opacity: 1; 
+            pointer-events: auto; 
+            transform: translateY(0);
+        }
+        .social-icon {
+            width: 48px; height: 48px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: all 0.3s;
+            transform: scale(0) rotate(-180deg);
+            text-decoration: none;
+        }
+        .social-icons.active .social-icon {
+            transform: scale(1) rotate(0);
+        }
+        .social-icon:nth-child(1) { transition-delay: 0.05s; }
+        .social-icon:nth-child(2) { transition-delay: 0.1s; }
+        .social-icon:nth-child(3) { transition-delay: 0.15s; }
+        .social-icon:nth-child(4) { transition-delay: 0.2s; }
+        .social-icon:nth-child(5) { transition-delay: 0.25s; }
+        .social-icon:nth-child(6) { transition-delay: 0.3s; }
+        .social-icon:nth-child(7) { transition-delay: 0.35s; }
+        .social-icon:hover { transform: scale(1.15) !important; }
+        .social-whatsapp { background: #25D366; }
+        .social-telegram { background: #0088cc; }
+        .social-linkedin { background: #0077B5; }
+        .social-facebook { background: #1877F2; }
+        .social-instagram { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
+        .social-tiktok { background: #000; border: 2px solid #69C9D0; }
+        .social-more { background: var(--violet); }
+        
+        /* Chatbot */
+        .chatbot-container {
+            position: fixed;
+            bottom: 100px;
+            left: 1.5rem;
+            z-index: 90;
+        }
+        
+        .chatbot-toggle {
+            width: 56px; height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #22c55e, #10b981);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 4px 20px rgba(34, 197, 94, 0.4);
+            transition: all 0.3s;
+        }
+        
+        .chatbot-toggle:hover { transform: scale(1.1); }
+        
+        .chatbot-toggle .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ef4444;
+            color: white;
+            font-size: 0.7rem;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .chatbot-window {
+            position: absolute;
+            bottom: 70px;
+            left: 0;
+            width: 350px;
+            background: var(--card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border);
+            border-radius: 1rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(20px);
+            transition: all 0.3s;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chatbot-window.active {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+        
+        .chatbot-header {
+            padding: 1rem;
+            background: linear-gradient(135deg, rgba(127, 90, 240, 0.2), rgba(230, 199, 123, 0.1));
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .chatbot-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .chatbot-status {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #22c55e;
+            animation: pulse 2s infinite;
+        }
+        
+        .chatbot-close {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            border: none;
+            background: transparent;
+            color: var(--fg);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .chatbot-messages {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            max-height: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .message {
+            padding: 0.75rem;
+            border-radius: 1rem;
+            max-width: 80%;
+            word-wrap: break-word;
+            animation: messageIn 0.3s ease;
+        }
+        
+        @keyframes messageIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .message-bot {
+            background: rgba(127, 90, 240, 0.2);
+            align-self: flex-start;
+            border-bottom-left-radius: 0.25rem;
+        }
+        
+        .message-user {
+            background: rgba(230, 199, 123, 0.2);
+            align-self: flex-end;
+            border-bottom-right-radius: 0.25rem;
+        }
+        
+        .chatbot-input {
+            padding: 1rem;
+            border-top: 1px solid var(--card-border);
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .chatbot-input input {
+            flex: 1;
+            padding: 0.75rem;
+            background: var(--bg);
+            border: 1px solid var(--card-border);
+            border-radius: 0.5rem;
+            color: var(--fg);
+            font-size: 0.875rem;
+        }
+        
+        .chatbot-input input:focus {
+            outline: none;
+            border-color: var(--violet);
+        }
+        
+        .chatbot-send {
+            padding: 0.75rem;
+            background: linear-gradient(135deg, var(--violet), var(--gold));
+            border: none;
+            border-radius: 0.5rem;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .quick-replies {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            padding: 0 1rem 1rem;
+        }
+        
+        .quick-reply {
+            padding: 0.5rem 0.75rem;
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .quick-reply:hover {
+            background: rgba(127, 90, 240, 0.2);
+            border-color: var(--violet);
+        }
+        
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(5px);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: var(--card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border);
+            border-radius: 1.5rem;
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalIn 0.3s ease;
+        }
+        @keyframes modalIn { from { opacity: 0; transform: scale(0.95); } }
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+        .modal-close {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            border: none;
+            background: var(--card);
+            color: var(--fg);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-body { padding: 1.5rem; }
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(127, 90, 240, 0.1);
+            border-radius: 0.75rem;
+        }
+        .contact-icon {
+            width: 48px; height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--violet), var(--gold));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        .contact-label { font-size: 0.75rem; color: var(--muted); }
+        .contact-value { font-weight: 600; }
+        .form-group { margin-bottom: 1rem; }
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+            color: var(--muted);
+        }
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--bg);
+            border: 1px solid var(--card-border);
+            border-radius: 0.5rem;
+            color: var(--fg);
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+        .form-input:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--violet);
+        }
+        .form-textarea { min-height: 100px; resize: vertical; }
+        
+        /* Stats Section */
+        .stats-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+        .stats-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        .live-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(34, 197, 94, 0.2);
+            border-radius: 2rem;
+            color: var(--success);
+            font-size: 0.875rem;
+        }
+        .live-dot {
+            width: 8px; height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        .action-btn {
+            padding: 1rem 1.5rem;
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 1rem;
+            color: var(--fg);
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 0.2s;
+        }
+        .action-btn:hover {
+            border-color: var(--violet);
+            transform: translateY(-2px);
+        }
+        .action-icon {
+            width: 40px; height: 40px;
+            border-radius: 0.75rem;
+            background: linear-gradient(135deg, var(--violet), var(--gold));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        /* Chart Placeholder */
+        .chart-placeholder {
+            height: 200px;
+            background: linear-gradient(135deg, rgba(127,90,240,0.1), rgba(230,199,123,0.1));
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--muted);
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .header-actions .btn:not(.btn-icon) span { display: none; }
+            .brand { font-size: 1rem; }
+            .chatbot-window {
+                width: calc(100vw - 2rem);
+                left: 50%;
+                transform: translateX(-50%) translateY(20px);
+            }
+            .chatbot-window.active {
+                transform: translateX(-50%) translateY(0);
+            }
+            .floating-social, .chatbot-container {
+                bottom: 70px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .floating-social, .chatbot-container {
+                bottom: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <canvas id="animated-bg"></canvas>
+    
+    <!-- Header -->
+    <header>
+        <div class="brand">MABON SUITES</div>
+        <div class="header-actions">
+            <button class="btn btn-primary" onclick="openContactModal()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                </svg>
+                <span>Contact Support</span>
+            </button>
+            <button class="btn btn-icon btn-ghost" onclick="toggleTheme()" title="Toggle Theme">
+                <svg id="theme-icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="5"/>
+                    <line x1="12" y1="1" x2="12" y2="3"/>
+                    <line x1="12" y1="21" x2="12" y2="23"/>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                    <line x1="1" y1="12" x2="3" y2="12"/>
+                    <line x1="21" y1="12" x2="23" y2="12"/>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                </svg>
+                <svg id="theme-icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                </svg>
+            </button>
+        </div>
+    </header>
+    
+    <!-- Floating Tabs - Always Visible -->
+    <div class="floating-tabs">
+        <button class="floating-tab-btn active" onclick="switchTab('home')" title="Home">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                <polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+            <span class="tab-tooltip">Home Dashboard</span>
+        </button>
+        <button class="floating-tab-btn" onclick="switchTab('admin')" title="Admin Panel">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                <line x1="3" y1="9" x2="21" y2="9"/>
+                <line x1="9" y1="21" x2="9" y2="9"/>
+            </svg>
+            <span class="tab-tooltip">Admin Panel</span>
+        </button>
+        <button class="floating-tab-btn" onclick="switchTab('voided')" title="Voided Transactions">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
+            </svg>
+            <span class="tab-tooltip">Voided Transactions</span>
+        </button>
+        <button class="floating-tab-btn" onclick="switchTab('attachments')" title="Attachments">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+            </svg>
+            <span class="tab-tooltip">Attachments</span>
+        </button>
+    </div>
+    
+    <!-- Main Content -->
+    <main>
+        <div class="container">
+            <!-- Tab Navigation -->
+            <nav class="tab-nav">
+                <button class="tab-btn active" onclick="switchTab('home')">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                        <polyline points="9 22 9 12 15 12 15 22"/>
+                    </svg>
+                    Home
+                </button>
+                <button class="tab-btn" onclick="switchTab('admin')">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                        <line x1="3" y1="9" x2="21" y2="9"/>
+                        <line x1="9" y1="21" x2="9" y2="9"/>
+                    </svg>
+                    Admin Panel
+                </button>
+                <button class="tab-btn" onclick="switchTab('voided')">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
+                    </svg>
+                    Voided Transactions
+                </button>
+                <button class="tab-btn" onclick="switchTab('attachments')">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+                    </svg>
+                    Attachments
+                </button>
+            </nav>
+            
+            <!-- Home Section -->
+            <section id="section-home" class="section active">
+                <div class="stats-header">
+                    <h1 class="stats-title">Welcome to the Executive Performance Cloud</h1>
+                </div>
+                
+                <div class="card" style="margin-bottom: 1.5rem;">
+                    <h2 style="font-size: 1.5rem; margin-bottom: 1rem; color: var(--gold);">How to Navigate This Application</h2>
+                    <p style="color: var(--muted); line-height: 1.7; margin-bottom: 1rem;">
+                        Use the navigation tabs at the top of the page or the floating tab buttons on the right side of your screen to switch between different sections. On mobile devices, use the bottom navigation bar.
+                    </p>
+                    <p style="color: var(--muted); line-height: 1.7;">
+                        Each tab provides access to specialized tools and reports designed for executive and management performance monitoring.
+                    </p>
+                </div>
+
+                <div class="grid grid-3">
+                    <div class="card">
+                        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                            <div style="width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, var(--violet), var(--gold)); display: flex; align-items: center; justify-content: center;">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                                    <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                                    <path d="M2 17l10 5 10-5"/>
+                                    <path d="M2 12l10 5 10-5"/>
+                                </svg>
+                            </div>
+                            <h3 style="font-size: 1.25rem; color: var(--fg);">Admin</h3>
+                        </div>
+                        <p style="color: var(--muted); line-height: 1.6; font-size: 0.9rem;">
+                            Access the administrative control panel for managing system settings, user permissions, and configuration options. This section is intended for authorized administrators only.
+                        </p>
+                    </div>
+
+                    <div class="card">
+                        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                            <div style="width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, var(--danger), #ff6b6b); display: flex; align-items: center; justify-content: center;">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <line x1="15" y1="9" x2="9" y2="15"/>
+                                    <line x1="9" y1="9" x2="15" y2="15"/>
+                                </svg>
+                            </div>
+                            <h3 style="font-size: 1.25rem; color: var(--fg);">Voided</h3>
+                        </div>
+                        <p style="color: var(--muted); line-height: 1.6; font-size: 0.9rem;">
+                            Review and manage voided transactions. This section displays all cancelled or reversed entries, providing a complete audit trail for financial reconciliation and compliance purposes.
+                        </p>
+                    </div>
+
+                    <div class="card">
+                        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                            <div style="width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, var(--success), #34d399); display: flex; align-items: center; justify-content: center;">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                                    <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+                                </svg>
+                            </div>
+                            <h3 style="font-size: 1.25rem; color: var(--fg);">Attachments</h3>
+                        </div>
+                        <p style="color: var(--muted); line-height: 1.6; font-size: 0.9rem;">
+                            View and manage all document attachments associated with transactions and records. Upload, download, and organize supporting documentation for easy reference and compliance.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top: 1.5rem; border-left: 4px solid var(--violet);">
+                    <h3 style="font-size: 1.1rem; margin-bottom: 0.75rem; color: var(--fg);">Quick Tips</h3>
+                    <ul style="color: var(--muted); line-height: 1.8; padding-left: 1.25rem;">
+                        <li>Use the theme toggle in the header to switch between dark and light modes</li>
+                        <li>The floating buttons on the right provide quick access to all sections</li>
+                        <li>On mobile, swipe or use the bottom navigation bar to switch tabs</li>
+                        <li>Use the chatbot (green button) for assistance with common questions</li>
+                    </ul>
+                </div>
+            </section>
+            
+            <!-- Admin Panel Section -->
+            <section id="section-admin" class="section">
+                <div class="stats-header">
+                    <h1 class="stats-title">Admin Panel</h1>
+                </div>
+                <div class="iframe-container">
+                    <iframe src="https://script.google.com/macros/s/AKfycbwkRzXdFhZcg-uG48TJNDSFCD6S50ORnXP69M0e0-3JOYwovKrgwtEBVcdGDfDcjpjs/exec?action=admin" title="Admin Panel"></iframe>
+                </div>
+            </section>
+            
+            <!-- Voided Transactions Section -->
+            <section id="section-voided" class="section">
+                <div class="stats-header">
+                    <h1 class="stats-title">Voided Transactions</h1>
+                </div>
+                <div class="iframe-container">
+                    <iframe src="https://script.google.com/macros/s/AKfycbwkRzXdFhZcg-uG48TJNDSFCD6S50ORnXP69M0e0-3JOYwovKrgwtEBVcdGDfDcjpjs/exec?action=deleted" title="Voided Transactions"></iframe>
+                </div>
+            </section>
+            
+            <!-- Attachments Section -->
+            <section id="section-attachments" class="section">
+                <div class="stats-header">
+                    <h1 class="stats-title">Attachments</h1>
+                </div>
+                <div class="iframe-container">
+                    <iframe src="https://script.google.com/macros/s/AKfycbwkRzXdFhZcg-uG48TJNDSFCD6S50ORnXP69M0e0-3JOYwovKrgwtEBVcdGDfDcjpjs/exec?action=attachments" title="Attachments"></iframe>
+                </div>
+            </section>
+        </div>
+    </main>
+    
+    <!-- Mobile Navigation -->
+    <nav class="mobile-nav">
+        <button class="mobile-nav-btn active" onclick="switchTab('home')">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                <polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+            Home
+        </button>
+        <button class="mobile-nav-btn" onclick="switchTab('admin')">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                <line x1="3" y1="9" x2="21" y2="9"/>
+                <line x1="9" y1="21" x2="9" y2="9"/>
+            </svg>
+            Admin
+        </button>
+        <button class="mobile-nav-btn" onclick="switchTab('voided')">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
+            </svg>
+            Voided
+        </button>
+        <button class="mobile-nav-btn" onclick="switchTab('attachments')">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+            </svg>
+            Attach
+        </button>
+    </nav>
+    
+    <!-- Floating Social Button -->
+    <div class="floating-social">
+        <div class="social-icons" id="social-icons">
+            <a href="https://wa.me/1234567890" target="_blank" class="social-icon social-whatsapp" title="WhatsApp">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                </svg>
+            </a>
+            <a href="https://t.me/mabonsuites" target="_blank" class="social-icon social-telegram" title="Telegram">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                </svg>
+            </a>
+            <a href="https://linkedin.com/company/mabonsuites" target="_blank" class="social-icon social-linkedin" title="LinkedIn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                </svg>
+            </a>
+            <a href="https://facebook.com/mabonsuites" target="_blank" class="social-icon social-facebook" title="Facebook">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                </svg>
+            </a>
+            <a href="https://instagram.com/mabonsuites" target="_blank" class="social-icon social-instagram" title="Instagram">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z"/>
+                </svg>
+            </a>
+            <a href="https://tiktok.com/@mabonsuites" target="_blank" class="social-icon social-tiktok" title="TikTok">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/>
+                </svg>
+            </a>
+            <button class="social-icon social-more" title="More Options" onclick="alert('More social links coming soon!')">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="1"/>
+                    <circle cx="12" cy="5" r="1"/>
+                    <circle cx="12" cy="19" r="1"/>
+                </svg>
+            </button>
+        </div>
+        <button class="social-toggle" id="social-toggle" onclick="toggleSocial()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+                <polyline points="16 6 12 2 8 6"/>
+                <line x1="12" y1="2" x2="12" y2="15"/>
+            </svg>
+        </button>
+    </div>
+    
+    <!-- Chatbot -->
+    <div class="chatbot-container">
+        <div class="chatbot-window" id="chatbot-window">
+            <div class="chatbot-header">
+                <div class="chatbot-title">
+                    <div class="chatbot-status"></div>
+                    <span>Mabon Assistant</span>
+                </div>
+                <button class="chatbot-close" onclick="toggleChatbot()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="chatbot-messages" id="chatbot-messages">
+                <div class="message message-bot">
+                    Hello! I'm your Mabon Suites Assistant. How can I help you today?
+                </div>
+                <div class="message message-bot">
+                    You can ask me about:
+                    <ul style="margin-top: 0.5rem; padding-left: 1rem; font-size: 0.875rem;">
+                        <li>Hotel occupancy rates</li>
+                        <li>Revenue reports</li>
+                        <li>Booking statistics</li>
+                        <li>Staff management</li>
+                        <li>Technical support</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="quick-replies">
+                <div class="quick-reply" onclick="sendQuickMessage('Show me today\'s occupancy')">Today's Occupancy</div>
+                <div class="quick-reply" onclick="sendQuickMessage('Revenue report')">Revenue Report</div>
+                <div class="quick-reply" onclick="sendQuickMessage('Active bookings')">Active Bookings</div>
+                <div class="quick-reply" onclick="sendQuickMessage('Help with admin panel')">Admin Help</div>
+            </div>
+            <div class="chatbot-input">
+                <input type="text" id="chatbot-input" placeholder="Type your message..." onkeypress="handleChatInput(event)">
+                <button class="chatbot-send" onclick="sendMessage()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="22" y1="2" x2="11" y2="13"/>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <button class="chatbot-toggle" id="chatbot-toggle" onclick="toggleChatbot()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+            <div class="badge" id="chatbot-badge">1</div>
+        </button>
+    </div>
+    
+    <!-- Contact Support Modal -->
+    <div class="modal-overlay" id="contact-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Contact Support</h2>
+                <button class="modal-close" onclick="closeContactModal()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="contact-label">Phone</div>
+                            <div class="contact-value">+1 (555) 123-4567</div>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                                <polyline points="22,6 12,13 2,6"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="contact-label">Email</div>
+                            <div class="contact-value">support@mabonsuites.com</div>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <polyline points="12 6 12 12 16 14"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="contact-label">24/7 Support</div>
+                            <div class="contact-value">Available round the clock</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <form onsubmit="submitContactForm(event)">
+                    <div class="form-group">
+                        <label class="form-label">Name</label>
+                        <input type="text" class="form-input" placeholder="Your name" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-input" placeholder="your@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Message</label>
+                        <textarea class="form-textarea" placeholder="How can we help you?" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Theme Toggle
+        let isDark = true;
+        function toggleTheme() {
+            isDark = !isDark;
+            document.body.classList.toggle('light', !isDark);
+            document.getElementById('theme-icon-sun').style.display = isDark ? 'block' : 'none';
+            document.getElementById('theme-icon-moon').style.display = isDark ? 'none' : 'block';
+            initCanvas();
+        }
+        
+        // Tab Switching
+        function switchTab(tabId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.mobile-nav-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.floating-tab-btn').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById('section-' + tabId).classList.add('active');
+            
+            // Update tab buttons
+            const tabs = ['home', 'admin', 'voided', 'attachments'];
+            document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+                if (tabs[i] === tabId) btn.classList.add('active');
+            });
+            
+            document.querySelectorAll('.mobile-nav-btn').forEach((btn, i) => {
+                if (tabs[i] === tabId) btn.classList.add('active');
+            });
+            
+            document.querySelectorAll('.floating-tab-btn').forEach((btn, i) => {
+                if (tabs[i] === tabId) btn.classList.add('active');
+            });
+        }
+        
+        // Social Toggle
+        function toggleSocial() {
+            const toggle = document.getElementById('social-toggle');
+            const icons = document.getElementById('social-icons');
+            toggle.classList.toggle('active');
+            icons.classList.toggle('active');
+            
+            // Close chatbot if open
+            if (chatbotOpen) {
+                toggleChatbot();
+            }
+        }
+        
+        // Chatbot
+        let chatbotOpen = false;
+        let unreadMessages = 1;
+        
+        function toggleChatbot() {
+            const chatbotWindow = document.getElementById('chatbot-window');
+            const chatbotToggle = document.getElementById('chatbot-toggle');
+            
+            chatbotOpen = !chatbotOpen;
+            chatbotWindow.classList.toggle('active');
+            
+            // Close social icons if open
+            const socialIcons = document.getElementById('social-icons');
+            const socialToggle = document.getElementById('social-toggle');
+            if (socialIcons.classList.contains('active')) {
+                socialIcons.classList.remove('active');
+                socialToggle.classList.remove('active');
+            }
+            
+            // Mark messages as read
+            if (chatbotOpen && unreadMessages > 0) {
+                unreadMessages = 0;
+                document.getElementById('chatbot-badge').style.display = 'none';
+            }
+        }
+        
+        function sendMessage() {
+            const input = document.getElementById('chatbot-input');
+            const message = input.value.trim();
+            
+            if (message) {
+                addMessage(message, 'user');
+                input.value = '';
+                
+                // Simulate bot response
+                setTimeout(() => {
+                    generateBotResponse(message);
+                }, 500);
+            }
+        }
+        
+        function sendQuickMessage(message) {
+            addMessage(message, 'user');
+            
+            // Simulate bot response
+            setTimeout(() => {
+                generateBotResponse(message);
+            }, 500);
+        }
+        
+        function handleChatInput(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        }
+        
+        function addMessage(text, sender) {
+            const messagesContainer = document.getElementById('chatbot-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message message-${sender}`;
+            messageDiv.textContent = text;
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            
+            // Show badge if chatbot is closed
+            if (!chatbotOpen && sender === 'bot') {
+                unreadMessages++;
+                document.getElementById('chatbot-badge').textContent = unreadMessages;
+                document.getElementById('chatbot-badge').style.display = 'flex';
+            }
+        }
+        
+        function generateBotResponse(userMessage) {
+            const responses = {
+                'occupancy': "Today's occupancy rate is 87.3% with 142 check-ins and 98 check-outs scheduled.",
+                'revenue': "Current month revenue: $847,293, up 12.5% from last month. Projected monthly revenue: $925,000.",
+                'bookings': "Active bookings: 1,247. Today's arrivals: 156. Tomorrow's departures: 89.",
+                'admin': "For admin panel assistance: 1. Check user permissions 2. Verify data connections 3. Contact support if issues persist.",
+                'default': "I can help with occupancy rates, revenue reports, booking statistics, and staff management. Try asking about today's occupancy or revenue trends."
+            };
+            
+            const message = userMessage.toLowerCase();
+            let response = responses.default;
+            
+            if (message.includes('occupancy')) {
+                response = responses.occupancy;
+            } else if (message.includes('revenue')) {
+                response = responses.revenue;
+            } else if (message.includes('booking')) {
+                response = responses.bookings;
+            } else if (message.includes('admin') || message.includes('help')) {
+                response = responses.admin;
+            }
+            
+            addMessage(response, 'bot');
+        }
+        
+        // Contact Modal
+        function openContactModal() {
+            document.getElementById('contact-modal').classList.add('active');
+        }
+        function closeContactModal() {
+            document.getElementById('contact-modal').classList.remove('active');
+        }
+        function submitContactForm(e) {
+            e.preventDefault();
+            alert('Thank you for your message! Our support team will contact you shortly.');
+            closeContactModal();
+        }
+        
+        // Close modal on overlay click
+        document.getElementById('contact-modal').addEventListener('click', function(e) {
+            if (e.target === this) closeContactModal();
+        });
+        
+        // Animated Background
+        const canvas = document.getElementById('animated-bg');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let stars = [];
+        let animationId;
+        
+        function initCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            // Create stars
+            stars = [];
+            for (let i = 0; i < 150; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 2,
+                    opacity: Math.random(),
+                    twinkleSpeed: 0.01 + Math.random() * 0.02
+                });
+            }
+            
+            // Create particles
+            particles = [];
+            const colors = isDark 
+                ? ['rgba(127, 90, 240, 0.6)', 'rgba(230, 199, 123, 0.5)', 'rgba(255, 255, 255, 0.4)']
+                : ['rgba(127, 90, 240, 0.4)', 'rgba(184, 148, 55, 0.3)', 'rgba(100, 100, 150, 0.3)'];
+            
+            for (let i = 0; i < 50; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 4 + 1,
+                    speedX: (Math.random() - 0.5) * 0.5,
+                    speedY: (Math.random() - 0.5) * 0.5,
+                    color: colors[Math.floor(Math.random() * colors.length)]
+                });
+            }
+        }
+        
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw stars
+            stars.forEach(star => {
+                star.opacity += star.twinkleSpeed;
+                if (star.opacity > 1 || star.opacity < 0.2) star.twinkleSpeed *= -1;
+                
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+                ctx.fillStyle = isDark 
+                    ? `rgba(255, 255, 255, ${star.opacity * 0.8})`
+                    : `rgba(127, 90, 240, ${star.opacity * 0.3})`;
+                ctx.fill();
+            });
+            
+            // Draw particles
+            particles.forEach(p => {
+                p.x += p.speedX;
+                p.y += p.speedY;
+                
+                if (p.x < 0) p.x = canvas.width;
+                if (p.x > canvas.width) p.x = 0;
+                if (p.y < 0) p.y = canvas.height;
+                if (p.y > canvas.height) p.y = 0;
+                
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fillStyle = p.color;
+                ctx.fill();
+            });
+            
+            // Draw connections
+            particles.forEach((p1, i) => {
+                particles.slice(i + 1).forEach(p2 => {
+                    const dx = p1.x - p2.x;
+                    const dy = p1.y - p2.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (dist < 150) {
+                        ctx.beginPath();
+                        ctx.moveTo(p1.x, p1.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.strokeStyle = isDark 
+                            ? `rgba(127, 90, 240, ${0.1 * (1 - dist / 150)})`
+                            : `rgba(127, 90, 240, ${0.08 * (1 - dist / 150)})`;
+                        ctx.stroke();
+                    }
+                });
+            });
+            
+            animationId = requestAnimationFrame(animate);
+        }
+        
+        window.addEventListener('resize', () => {
+            cancelAnimationFrame(animationId);
+            initCanvas();
+            animate();
+        });
+        
+        initCanvas();
+        animate();
+    </script>
+</body>
+</html>
