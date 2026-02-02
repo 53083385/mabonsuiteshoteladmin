@@ -747,22 +747,36 @@
         @media (max-width: 768px) {
             .header-actions .btn:not(.btn-icon) span { display: none; }
             .brand { font-size: 1rem; }
+            .chatbot-container {
+                left: auto;
+                right: 5rem;
+                bottom: 70px;
+            }
             .chatbot-window {
                 width: calc(100vw - 2rem);
-                left: 50%;
-                transform: translateX(-50%) translateY(20px);
+                left: auto;
+                right: 0;
+                transform: translateY(20px);
             }
             .chatbot-window.active {
-                transform: translateX(-50%) translateY(0);
+                transform: translateY(0);
             }
-            .floating-social, .chatbot-container {
+            .floating-social {
                 bottom: 70px;
             }
         }
         
         @media (max-width: 480px) {
-            .floating-social, .chatbot-container {
+            .floating-social {
                 bottom: 60px;
+            }
+            .chatbot-container {
+                right: 4.5rem;
+                bottom: 60px;
+            }
+            .chatbot-window {
+                width: calc(100vw - 1rem);
+                right: -3.5rem;
             }
         }
     </style>
@@ -773,7 +787,7 @@
     
     <!-- Header -->
     <header>
-        <div class="brand">MABON SUITES</div>
+        <div class="brand">MABON SUITES HOTEL</div>
         <div class="header-actions">
             <button class="btn btn-primary" onclick="openContactModal()">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
